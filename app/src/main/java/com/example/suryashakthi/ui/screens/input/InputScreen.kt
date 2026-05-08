@@ -53,6 +53,12 @@ import kotlin.random.Random
 fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
     var solarInput by remember { mutableStateOf("") }
     var consumptionInput by remember { mutableStateOf("") }
+    
+    // Derived state for validation
+    val isSolarValid = solarInput.isEmpty() || solarInput.toFloatOrNull() != null
+    val isConsumptionValid = consumptionInput.isEmpty() || consumptionInput.toFloatOrNull() != null
+    val isSubmitEnabled = solarInput.isNotBlank() && consumptionInput.isNotBlank() && isSolarValid && isConsumptionValid
+
     val context = LocalContext.current
 
     Column(
@@ -113,49 +119,71 @@ fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
 
         OutlinedTextField(
             value = solarInput,
-            onValueChange = { solarInput = it },
+            onValueChange = { 
+                if (it.isEmpty() || it.toDoubleOrNull() != null || it == ".") {
+                    solarInput = it
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             placeholder = { Text("Manual Solar Production (kWh)", color = Color.Gray) },
+            supportingText = {
+                if (!isSolarValid) {
+                    Text("Please enter a valid number", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            isError = !isSolarValid,
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.SolarPower,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = Color.DarkGray
+                    tint = if (isSolarValid) Color.DarkGray else MaterialTheme.colorScheme.error
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.LightGray
+                unfocusedBorderColor = Color.LightGray,
+                errorBorderColor = MaterialTheme.colorScheme.error
             )
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = consumptionInput,
-            onValueChange = { consumptionInput = it },
+            onValueChange = { 
+                if (it.isEmpty() || it.toDoubleOrNull() != null || it == ".") {
+                    consumptionInput = it
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             placeholder = { Text("Manual Grid Consumption (kWh)", color = Color.Gray) },
+            supportingText = {
+                if (!isConsumptionValid) {
+                    Text("Please enter a valid number", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            isError = !isConsumptionValid,
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Bolt,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = Color.DarkGray
+                    tint = if (isConsumptionValid) Color.DarkGray else MaterialTheme.colorScheme.error
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.LightGray
+                unfocusedBorderColor = Color.LightGray,
+                errorBorderColor = MaterialTheme.colorScheme.error
             )
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
@@ -174,9 +202,11 @@ fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Black,
-                contentColor = Color(0xFFFFD600)
+                contentColor = Color(0xFFFFD600),
+                disabledContainerColor = Color.LightGray,
+                disabledContentColor = Color.White
             ),
-            enabled = solarInput.isNotBlank() && consumptionInput.isNotBlank()
+            enabled = isSubmitEnabled
         ) {
             Text(text = "Log Entry Manually", fontSize = 16.sp, fontWeight = FontWeight.Black)
         }

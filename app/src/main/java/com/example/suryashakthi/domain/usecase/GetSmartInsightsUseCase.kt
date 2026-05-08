@@ -23,6 +23,8 @@ class GetSmartInsightsUseCase @Inject constructor(
             
             val insight = repository.fetchAiInsights(analysisRequest)
             Result.success(insight)
+        } catch (e: java.net.UnknownHostException) {
+            Result.failure(Exception("Network error: Please check your internet connection and try again."))
         } catch (e: Exception) {
             Result.failure(e)
         }
