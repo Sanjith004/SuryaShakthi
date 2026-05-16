@@ -34,12 +34,12 @@ fun InsightsScreen(viewModel: DashboardViewModel = hiltViewModel()) {
             text = "AI Smart Advisor",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = "Advanced analysis of your energy footprint.",
             fontSize = 14.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             modifier = Modifier.padding(top = 8.dp)
         )
 
@@ -55,8 +55,8 @@ fun InsightsScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFF9800), // Orange background
-                contentColor = Color.White
+                containerColor = MaterialTheme.colorScheme.primary, // Yellow
+                contentColor = Color.Black
             ),
             elevation = null,
             enabled = !state.isAiLoading
@@ -89,7 +89,7 @@ fun InsightsScreen(viewModel: DashboardViewModel = hiltViewModel()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFFF5F5F5), RoundedCornerShape(24.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(24.dp))
                     .padding(24.dp)
             ) {
                 Column {
@@ -103,7 +103,7 @@ fun InsightsScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                     Text(
                         text = state.aiInsight!!,
                         fontSize = 16.sp,
-                        color = Color.DarkGray,
+                        color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 24.sp
                     )
                 }

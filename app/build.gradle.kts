@@ -26,6 +26,7 @@ android {
             localProperties.load(localPropertiesFile.inputStream())
         }
         buildConfigField("String", "GEMINI_API_KEY", "\"${localProperties.getProperty("GEMINI_API_KEY")}\"")
+        buildConfigField("String", "OPENAI_API_KEY", "\"${localProperties.getProperty("OPENAI_API_KEY")}\"")
     }
 
     buildTypes {
@@ -58,6 +59,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Architecture & DI
     implementation(libs.androidx.navigation.compose)

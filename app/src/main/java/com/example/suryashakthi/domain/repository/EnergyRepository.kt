@@ -10,5 +10,6 @@ import kotlinx.coroutines.flow.Flow
 interface EnergyRepository {
     fun getHistoricalRecords(): Flow<List<EnergyRecord>>
     suspend fun saveRecord(record: EnergyRecord)
+    suspend fun deleteRecord(record: EnergyRecord)
     suspend fun fetchAiInsights(prompt: String): String
 }

@@ -48,7 +48,7 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun saveEnergyRecord(solar: Float, consumption: Float) {
+    fun saveEnergyRecord(solar: Float, consumption: Float, weather: String = "Sunny") {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             repository.saveRecord(
@@ -56,10 +56,16 @@ class DashboardViewModel @Inject constructor(
                     solarProduction = solar,
                     gridConsumption = consumption,
                     batteryStorage = 0f,
-                    weatherCondition = "Sunny"
+                    weatherCondition = weather
                 )
             )
             // No need to manually update state as loadData() listens to the Flow
+        }
+    }
+
+    fun deleteEnergyRecord(record: EnergyRecord) {
+        viewModelScope.launch {
+            repository.deleteRecord(record)
         }
     }
 }

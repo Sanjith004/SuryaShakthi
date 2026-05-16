@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,6 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -62,7 +64,7 @@ fun MainScreen() {
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = Color.White, // High contrast white
+                containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 8.dp,
             ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -76,20 +78,20 @@ fun MainScreen() {
                             Icon(
                                 imageVector = screen.icon,
                                 contentDescription = screen.label,
-                                tint = if (isSelected) Color.Black else Color.Gray
+                                tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
                         },
                         label = {
                             Text(
                                 text = screen.label,
                                 style = MaterialTheme.typography.labelSmall,
-                                color = if (isSelected) Color.Black else Color.Gray,
+                                color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                             )
                         },
                         selected = isSelected,
                         colors = NavigationBarItemDefaults.colors(
-                            indicatorColor = Color(0xFFFFD600) // Vibrant yellow indicator
+                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                         ),
                         onClick = {
                             navController.navigate(screen.route) {

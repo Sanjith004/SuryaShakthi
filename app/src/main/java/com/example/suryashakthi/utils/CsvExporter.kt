@@ -1,32 +1,57 @@
 package com.example.suryashakthi.utils
 
 import android.content.Context
-import android.os.Environment
-import com.example.suryashakthi.data.local.EnergyDataEntity
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.FileProvider
+import com.example.suryashakthi.domain.model.EnergyRecord
 import java.io.File
 import java.io.FileWriter
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
+/**
+ * Utility to export energy records to a CSV file and share it.
+ */
 object CsvExporter {
-    fun exportToCsv(context: Context, data: List<EnergyDataEntity>): String? {
-        val fileName = "energy_data_export.csv"
-        val folder = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-        if (folder == null || !folder.exists()) {
-            folder?.mkdirs()
-        }
+    fun exportAndShare(context: Context, records: List<EnergyRecord>) {
+        val fileName = "SuryaShakti_Export_${System.currentTimeMillis()}.csv"
+        val file = File(context.cacheDir, fileName)
         
-        val file = File(folder, fileName)
-        return try {
+        try {
             val writer = FileWriter(file)
-            writer.append("Date,SolarGenerated(kWh),Consumption(kWh),AIInsight\n")
-            data.forEach {
-                writer.append("${it.date},${it.solarGenerated},${it.consumption},\"${it.aiInsight ?: ""}\"\n")
+            writer.append("Timestamp,Solar(kWh),Grid(kWh),Weather,CO2_Saved(kg)\n")
+            
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            
+            records.forEach { record ->
+                val dateStr = sdf.format(Date(record.timestamp))
+                writer.append("$dateStr,${record.solarProduction},${record.gridConsumption},${record.weatherCondition},${record.carbonReduced}\n")
             }
             writer.flush()
             writer.close()
-            file.absolutePath
+
+            shareFile(context, file)
         } catch (e: Exception) {
             e.printStackTrace()
-            null
         }
+    }
+
+    private fun shareFile(context: Context, file: File) {
+        val uri: Uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/csv"
+            putExtra(Intent.EXTRA_SUBJECT, "Energy Data Export")
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        
+        context.startActivity(Intent.createChooser(intent, "Share CSV"))
     }
 }

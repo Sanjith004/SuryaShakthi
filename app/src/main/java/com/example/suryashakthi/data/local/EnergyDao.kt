@@ -11,6 +11,9 @@ interface EnergyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecord(record: EnergyEntity)
 
+    @Delete
+    suspend fun deleteRecord(record: EnergyEntity)
+
     @Query("SELECT SUM(solarProduction) FROM energy_metrics")
     suspend fun getTotalSolarProduction(): Float?
 }
