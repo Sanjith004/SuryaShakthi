@@ -2,20 +2,27 @@ package com.example.suryashakthi.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Premium Solar Palette
-val SolarYellow = Color(0xFFFFD600) 
-val SolarOrange = Color(0xFFFF9800)
-val EnergyBlue = Color(0xFF2196F3)
-val EcoGreen = Color(0xFF00C853)
+// Modern Professional Palette
+val SolarAmber = Color(0xFFFFB300) // Warm energetic orange-yellow
+val SolarOrange = SolarAmber       // Alias for compatibility
+val EnergyCyan = Color(0xFF00ACC1) // Tech-focused energy blue
+val NatureGreen = Color(0xFF43A047) // Soft eco green
+val PowerRed = Color(0xFFE53935)   // Attention/Error red
 
-// Brand Colors
-val BrandDark = Color(0xFF1A1A1B)
-val BrandGold = Color(0xFFFFD700)
-val BrandWhite = Color(0xFFF8F9FA)
+// Dark Theme Surfaces
+val Slate900 = Color(0xFF121212) // Near black
+val Slate800 = Color(0xFF1E1E1E) // Card background
+val Slate700 = Color(0xFF2C2C2C) // Secondary surface
 
-val DarkSurface = Color(0xFF121212)
-val DarkBackground = Color(0xFF000000)
+// Light Theme Surfaces
+val ChalkWhite = Color(0xFFFAFAFA) // Softer than pure white
+val FogGray = Color(0xFFF1F1F1)   // Soft background gray
+val TextGray = Color(0xFF757575)
 
-val LightSurface = Color(0xFFFFFFFF)
-val LightBackground = Color(0xFFF5F5F5)
+// Aliases for backward compatibility if needed, but we'll migrate
+val SolarYellow = SolarAmber
+val EnergyBlue = EnergyCyan
+val EcoGreen = NatureGreen
+val DarkBackground = Slate900
+val DarkSurface = Slate800
 val DeepBlack = Color(0xFF000000)

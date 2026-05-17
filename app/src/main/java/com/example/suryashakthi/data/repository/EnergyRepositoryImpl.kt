@@ -4,9 +4,7 @@ import com.example.suryashakthi.BuildConfig
 import com.example.suryashakthi.data.local.EnergyDao
 import com.example.suryashakthi.data.local.toDomain
 import com.example.suryashakthi.data.local.toEntity
-import com.example.suryashakthi.data.remote.ChatMessage
-import com.example.suryashakthi.data.remote.OpenAiApi
-import com.example.suryashakthi.data.remote.OpenAiRequest
+import com.example.suryashakthi.data.remote.*
 import com.example.suryashakthi.domain.model.EnergyRecord
 import com.example.suryashakthi.domain.repository.EnergyRepository
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class EnergyRepositoryImpl @Inject constructor(
     private val dao: EnergyDao,
-    private val api: OpenAiApi
+    private val api: GeminiApi
 ) : EnergyRepository {
 
     override fun getHistoricalRecords(): Flow<List<EnergyRecord>> {
@@ -35,12 +33,17 @@ class EnergyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun fetchAiInsights(prompt: String): String {
-        val request = OpenAiRequest(
-            messages = listOf(ChatMessage(role = "user", content = prompt))
+        val apiKey = BuildConfig.GEMINI_API_KEY
+        if (apiKey == "null" || apiKey.isBlank()) {
+            throw Exception("Gemini API Key is missing. Please add GEMINI_API_KEY to your local.properties file.")
+        }
+
+        val request = GeminiRequest(
+            contents = listOf(Content(parts = listOf(Part(text = prompt))))
         )
         // Using the secure key from BuildConfig (invisible to user)
-        val response = api.generateContent("Bearer ${BuildConfig.OPENAI_API_KEY}", request)
-        return response.choices.firstOrNull()?.message?.content
+        val response = api.generateContent(apiKey, request)
+        return response.candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text
             ?: "No insights available."
     }
 }

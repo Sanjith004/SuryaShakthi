@@ -27,6 +27,7 @@ class GetSmartInsightsUseCase @Inject constructor(
             Result.failure(Exception("Network error: Please check your internet connection and try again."))
         } catch (e: retrofit2.HttpException) {
             val message = when (e.code()) {
+                401 -> "Unauthorized: Please check if your GEMINI_API_KEY in local.properties is correct."
                 429 -> "API Quota exceeded. Please wait a few minutes or check your Gemini plan."
                 404 -> "Model not found. We are updating the AI engine, please try again later."
                 else -> "AI service is currently unavailable (Error ${e.code()})."

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.suryashakthi.data.local.EnergyDao
 import com.example.suryashakthi.data.local.EnergyDatabase
-import com.example.suryashakthi.data.remote.OpenAiApi
+import com.example.suryashakthi.data.remote.GeminiApi
 import com.example.suryashakthi.data.repository.EnergyRepositoryImpl
 import com.example.suryashakthi.domain.repository.EnergyRepository
 import dagger.Binds
@@ -50,7 +50,7 @@ abstract class DataModule {
         @Singleton
         fun provideRetrofit(client: OkHttpClient): Retrofit {
             return Retrofit.Builder()
-                .baseUrl("https://api.openai.com/")
+                .baseUrl("https://generativelanguage.googleapis.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
@@ -58,6 +58,6 @@ abstract class DataModule {
 
         @Provides
         @Singleton
-        fun provideOpenAiApi(retrofit: Retrofit): OpenAiApi = retrofit.create(OpenAiApi::class.java)
+        fun provideGeminiApi(retrofit: Retrofit): GeminiApi = retrofit.create(GeminiApi::class.java)
     }
 }

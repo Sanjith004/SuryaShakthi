@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.suryashakthi.ui.theme.SolarAmber
 import com.example.suryashakthi.ui.viewmodel.DashboardViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -76,65 +77,62 @@ fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
     ) {
         Spacer(modifier = Modifier.height(48.dp))
         Text(
-            text = "Data Entry",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
+            text = "Energy Logging",
+            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
             color = MaterialTheme.colorScheme.onBackground
         )
         Text(
-            text = "Manual log or auto-simulate for today.",
-            fontSize = 14.sp,
+            text = "Record your metrics to train your AI advisor.",
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier.padding(top = 4.dp)
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Simulation Section (Requested Feature)
+        // Simulation Section
         Text(
-            text = "Quick Simulation",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
+            text = "Quick Presets",
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SimulationButton(
                 label = "Sunny Day",
                 icon = Icons.Default.WbSunny,
                 onClick = {
-                    val gen = Random.nextDouble(15.0, 25.0).toFloat()
-                    val cons = Random.nextDouble(5.0, 10.0).toFloat()
-                    viewModel.saveEnergyRecord(gen, cons)
-                    Toast.makeText(context, "Simulated Sunny Day: ${"%.1f".format(gen)}kWh", Toast.LENGTH_SHORT).show()
+                    val gen = Random.nextDouble(18.0, 26.0).toFloat()
+                    val cons = Random.nextDouble(4.0, 8.0).toFloat()
+                    viewModel.saveEnergyRecord(gen, cons, "Sunny")
+                    Toast.makeText(context, "Logged: Optimal Solar Day", Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.weight(1f),
-                color = Color(0xFFFFD600)
+                color = SolarAmber
             )
             SimulationButton(
                 label = "Cloudy Day",
                 icon = Icons.Default.Cloud,
                 onClick = {
-                    val gen = Random.nextDouble(2.0, 8.0).toFloat()
-                    val cons = Random.nextDouble(8.0, 12.0).toFloat()
-                    viewModel.saveEnergyRecord(gen, cons)
-                    Toast.makeText(context, "Simulated Cloudy Day: ${"%.1f".format(gen)}kWh", Toast.LENGTH_SHORT).show()
+                    val gen = Random.nextDouble(3.0, 9.0).toFloat()
+                    val cons = Random.nextDouble(9.0, 14.0).toFloat()
+                    viewModel.saveEnergyRecord(gen, cons, "Cloudy")
+                    Toast.makeText(context, "Logged: Low Solar Day", Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.weight(1f),
-                color = Color.LightGray
+                color = MaterialTheme.colorScheme.secondary
             )
         }
 
         Spacer(modifier = Modifier.height(32.dp))
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
             text = "Manual Input",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -142,7 +140,7 @@ fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
         // Weather Selection
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             weatherOptions.forEach { weather ->
                 WeatherChip(
@@ -164,11 +162,11 @@ fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            placeholder = { Text("Manual Solar Production (kWh)", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+            label = { Text("Solar Production (kWh)") },
+            shape = RoundedCornerShape(20.dp),
             supportingText = {
                 if (!isSolarValid) {
-                    Text("Please enter a valid number", color = MaterialTheme.colorScheme.error)
+                    Text("Enter a numeric value", color = MaterialTheme.colorScheme.error)
                 }
             },
             isError = !isSolarValid,
@@ -176,15 +174,16 @@ fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                 Icon(
                     imageVector = Icons.Default.SolarPower,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = if (isSolarValid) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error
+                    tint = if (isSolarValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                errorBorderColor = MaterialTheme.colorScheme.error
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                errorBorderColor = MaterialTheme.colorScheme.error,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
             )
         )
 
@@ -198,11 +197,11 @@ fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            placeholder = { Text("Manual Grid Consumption (kWh)", color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)) },
+            label = { Text("Grid Consumption (kWh)") },
+            shape = RoundedCornerShape(20.dp),
             supportingText = {
                 if (!isConsumptionValid) {
-                    Text("Please enter a valid number", color = MaterialTheme.colorScheme.error)
+                    Text("Enter a numeric value", color = MaterialTheme.colorScheme.error)
                 }
             },
             isError = !isConsumptionValid,
@@ -210,19 +209,20 @@ fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                 Icon(
                     imageVector = Icons.Default.Bolt,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = if (isConsumptionValid) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error
+                    tint = if (isConsumptionValid) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
                 )
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                errorBorderColor = MaterialTheme.colorScheme.error
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                errorBorderColor = MaterialTheme.colorScheme.error,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
             )
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Button(
             onClick = {
@@ -232,23 +232,26 @@ fun InputScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                     viewModel.saveEnergyRecord(solar, consumption, selectedWeather)
                     solarInput = ""
                     consumptionInput = ""
-                    Toast.makeText(context, "Entry logged successfully!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Data stored securely", Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(16.dp),
+                .height(64.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.onBackground,
-                contentColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
             ),
-            enabled = isSubmitEnabled
+            enabled = isSubmitEnabled,
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp, pressedElevation = 0.dp)
         ) {
-            Text(text = "Log Entry Manually", fontSize = 16.sp, fontWeight = FontWeight.Black)
+            Text(text = "Log Entry", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
         }
+        
+        Spacer(modifier = Modifier.height(48.dp))
     }
 }
 
@@ -279,9 +282,14 @@ fun SimulationButton(label: String, icon: androidx.compose.ui.graphics.vector.Im
         border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(icon, contentDescription = null, tint = if (isDark && color == Color.LightGray) Color.White else color, modifier = Modifier.size(24.dp))
+            Icon(
+                imageVector = icon, 
+                contentDescription = null, 
+                tint = if (isDark && color == Color.LightGray) MaterialTheme.colorScheme.onBackground else color, 
+                modifier = Modifier.size(24.dp)
+            )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(label, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text(label, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
         }
     }
 }

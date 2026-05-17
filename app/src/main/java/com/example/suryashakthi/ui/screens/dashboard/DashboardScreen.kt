@@ -3,6 +3,7 @@ package com.example.suryashakthi.ui.screens.dashboard
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -30,7 +31,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.suryashakthi.domain.model.EnergyData
 import com.example.suryashakthi.ui.components.ChartLegend
 import com.example.suryashakthi.ui.components.EnergyTrendChart
-import com.example.suryashakthi.ui.theme.EcoGreen
+import com.example.suryashakthi.ui.theme.NatureGreen
+import com.example.suryashakthi.ui.theme.SolarAmber
 import com.example.suryashakthi.ui.theme.SolarOrange
 import com.example.suryashakthi.ui.viewmodel.DashboardViewModel
 import com.example.suryashakthi.utils.CsvExporter
@@ -91,88 +93,114 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Branded Modern Icon
-            Surface(
-                modifier = Modifier.size(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.onBackground
+            // Branded Modern Icon - Gradient Glassmorphism effect
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(
+                        brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                            colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)
+                        ),
+                        shape = RoundedCornerShape(18.dp)
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.ElectricBolt,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.ElectricBolt,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(36.dp)
+                )
             }
             
             Column {
                 Text(
                     text = "Surya Shakti",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = (-1).sp,
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = (-1).sp
+                    ),
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     text = "Sustainable Energy Intelligence",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
-        // High Contrast Sustainability Section
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            EcoScoreGauge(score = avgEcoScore)
-            Spacer(modifier = Modifier.width(24.dp))
-            Column {
-                Text(
-                    text = "Independence",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = if (state.records.isEmpty()) 
-                        "Log data to see impact." 
-                        else "Green Energy Score: $avgEcoScore%",
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = "Savings Report (30 Days)",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+        // High Contrast Sustainability Section - Gauge + Score
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground),
-            shape = RoundedCornerShape(16.dp)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
         ) {
             Row(
                 modifier = Modifier.padding(24.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Total Money Saved", color = MaterialTheme.colorScheme.background, fontSize = 12.sp)
-                    Text("₹${"%.0f".format(totalSavings)}", color = MaterialTheme.colorScheme.primary, fontSize = 32.sp, fontWeight = FontWeight.Black)
+                EcoScoreGauge(score = avgEcoScore)
+                Spacer(modifier = Modifier.width(24.dp))
+                Column {
+                    Text(
+                        text = "Independence",
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = if (state.records.isEmpty()) 
+                            "Start logging to track impact." 
+                            else "Solar utilization is at $avgEcoScore%",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
                 }
-                Icon(Icons.Default.ElectricBolt, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(40.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Total Savings",
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(start = 4.dp),
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+            ),
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(32.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "Money Saved", 
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                    )
+                    Text(
+                        "₹${"%.0f".format(totalSavings)}", 
+                        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Black),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Default.ElectricBolt, 
+                    contentDescription = null, 
+                    tint = MaterialTheme.colorScheme.primary, 
+                    modifier = Modifier.size(56.dp)
+                )
             }
         }
 
@@ -180,8 +208,8 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
 
         Text(
             text = "Usage Metrics",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(start = 4.dp),
             color = MaterialTheme.colorScheme.onBackground
         )
         
@@ -189,19 +217,19 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             MetricCard(
-                title = "Generation",
+                title = "Solar Gen",
                 value = "%.1f".format(totalSolar),
                 unit = "kWh",
                 icon = Icons.Default.WbSunny,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.weight(1f)
             )
             MetricCard(
-                title = "Consumption",
+                title = "Grid Usage",
                 value = "%.1f".format(totalGrid),
                 unit = "kWh",
                 icon = Icons.Default.ElectricBolt,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -234,8 +262,10 @@ fun DashboardScreen(viewModel: DashboardViewModel = hiltViewModel()) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text("CO₂ Offset (Estimated)", color = if (isSystemInDarkTheme()) Color.White.copy(alpha = 0.7f) else Color(0xFF2E7D32), fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                    Text("%.1f kg".format(totalCo2), color = if (isSystemInDarkTheme()) Color.White else Color(0xFF1B5E20), fontSize = 32.sp, fontWeight = FontWeight.Black)
+                    val labelColor = if (isSystemInDarkTheme()) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    val valueColor = if (isSystemInDarkTheme()) Color.White else MaterialTheme.colorScheme.onSurface
+                    Text("CO₂ Offset (Estimated)", color = labelColor, style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold))
+                    Text("%.1f kg".format(totalCo2), color = valueColor, style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Black))
                 }
                 Text("🌳", fontSize = 40.sp)
             }
@@ -384,17 +414,24 @@ fun EcoScoreGauge(score: Int) {
 fun MetricCard(title: String, value: String, unit: String, icon: androidx.compose.ui.graphics.vector.ImageVector, color: Color, modifier: Modifier) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground)
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.1f))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(24.dp))
+        Column(modifier = Modifier.padding(20.dp)) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(color.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(20.dp))
+            }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(title, fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f), fontWeight = FontWeight.Bold)
+            Text(title, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
             Row(verticalAlignment = Alignment.Bottom) {
-                Text(value, fontSize = 24.sp, fontWeight = FontWeight.Black, color = MaterialTheme.colorScheme.onBackground)
-                Text(" $unit", fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f), modifier = Modifier.padding(bottom = 4.dp))
+                Text(value, style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.onSurface)
+                Text(" $unit", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f), modifier = Modifier.padding(bottom = 2.dp))
             }
         }
     }
@@ -402,31 +439,32 @@ fun MetricCard(title: String, value: String, unit: String, icon: androidx.compos
 
 @Composable
 fun NetEnergyCard(value: String, isPositive: Boolean) {
-    val bgColor = if (isPositive) EcoGreen else MaterialTheme.colorScheme.onBackground
-    val textColor = if (isPositive) Color.White else MaterialTheme.colorScheme.primary
+    val natureGreen = NatureGreen
+    val bgColor = if (isPositive) natureGreen else MaterialTheme.colorScheme.surface
+    val textColor = if (isPositive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
     
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = bgColor)
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = bgColor),
+        border = if (!isPositive) androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)) else null
     ) {
         Row(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier.padding(24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Net Energy Flow", fontSize = 12.sp, color = textColor.copy(alpha = 0.7f))
+                Text("Current Energy Flow", style = MaterialTheme.typography.labelMedium, color = textColor.copy(alpha = 0.7f))
                 Text(
-                    text = if (isPositive) "$value kWh (Exporting)" else "$value kWh (Importing)",
-                    fontSize = 24.sp, 
-                    fontWeight = FontWeight.Black, 
+                    text = if (isPositive) "$value kWh Saving" else "$value kWh Loading",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold), 
                     color = textColor
                 )
             }
             Icon(
                 imageVector = if (isPositive) Icons.Default.KeyboardDoubleArrowUp else Icons.Default.ElectricBolt,
                 contentDescription = null,
-                tint = textColor,
+                tint = if (isPositive) MaterialTheme.colorScheme.onPrimary else SolarAmber,
                 modifier = Modifier.size(32.dp)
             )
         }
